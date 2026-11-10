@@ -249,6 +249,14 @@ function separateReadingBlocks(article) {
   }
 }
 
+function flattenLinksForSpeech(article) {
+  for (const link of article.querySelectorAll("a")) {
+    link.replaceWith(
+      article.ownerDocument.createTextNode(link.textContent || "")
+    );
+  }
+}
+
 class ReaderModal extends Modal {
   owner = new RenderOwner();
   article;
@@ -307,7 +315,10 @@ class ReaderModal extends Modal {
   }
   publish() {
     if (this.disposed) return;
+    
+    flattenLinksForSpeech(this.article);
     separateReadingBlocks(this.article);
+    
     for (const checkbox of this.article.querySelectorAll(
       'input[type="checkbox"]',
     )) {
